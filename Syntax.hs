@@ -3,6 +3,8 @@ import Data.Char(chr, ord)
 import Data.List(find, nub, union, intersect, (\\))
 import SCC
 
+import Control.Monad.Fail (MonadFail)
+
 type Id  = String
 type Alt = ([Pat], Rhs)
 type Expl = (Id, Scheme, [Alt])
@@ -244,7 +246,7 @@ instance Types Assump where
   apply s (i :>: sc) = i :>: (apply s sc)
   tv (i :>: sc)      = tv sc
 
-findAssump :: Monad m => Id -> [Assump] -> m Scheme
+findAssump :: MonadFail m => Id -> [Assump] -> m Scheme
 findAssump id [] = fail ("unbound identifier: " ++ id)
 findAssump id ((i:>:sc):as) = if i == id then return sc else findAssump id as
 
